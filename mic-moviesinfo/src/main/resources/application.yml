@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: mic-moviesinfo
+  profiles:
+    active: local
+  config:
+    activate:
+      on-profile: local
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/moviesdb-local

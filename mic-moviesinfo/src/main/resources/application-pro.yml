@@ -1,0 +1,7 @@
+spring:
+  config:
+    activate:
+      on-profile: pro
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/moviesdb-pro
