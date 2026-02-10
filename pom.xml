@@ -12,6 +12,7 @@
         <module>mic-moviesinfo</module>
         <module>mic-reactive-playground</module>
         <module>mic-moviesreview</module>
+        <module>mic-moviesservice</module>
     </modules>
 
     <properties>

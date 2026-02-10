@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: mic-moviesservice
+  profiles:
+    active: local
+  config:
+    activate:
+      on-profile: local
+
+restClient:
+  moviesInfoUrl: http://localhost:8080/v1/movieinfos
+  reviewUrl: http://localhost:8081/v1/reviews
+
+server:
+  port: 8082
