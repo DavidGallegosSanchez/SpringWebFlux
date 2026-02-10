@@ -17,11 +17,11 @@ public class Review {
     @Id
     private String reviewId;
 
-    //@NotNull(message = "rating.movieInfoId : must not be null")
+    @NotNull(message = "rating.movieInfoId : must not be null")
     private Long movieInfoId;
 
     private String comment;
 
-    //@Min(value = 0L, message = "rating.negative : please pass a non-negative value")
+    @Min(value = 0L, message = "rating.negative : please pass a non-negative value")
     private Double rating;
 }

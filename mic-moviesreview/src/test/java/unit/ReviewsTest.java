@@ -57,7 +57,6 @@ class ReviewsTest {
                     assert savedReview.getReviewId() != null;
                     assertEquals("Rush", savedReview.getComment());
                 });
-
     }
 
     @Test
@@ -124,6 +123,26 @@ class ReviewsTest {
                 .exchange()
                 .expectStatus()
                 .isNoContent();
+    }
+
+    @Test
+    void addReview_validation() {
+        // given
+        var review = new Review(null, null, "Awesome Movie", -9.0);
+
+        // when
+        when(reviewReactiveRepository.save(review))
+                .thenReturn(Mono.just(new Review("abs", 1L, "Rush", 9.0)));
+
+        // then
+        webTestClient
+                .post()
+                .uri(REVIEWS_URL)
+                .bodyValue(review)
+                .exchange()
+                .expectStatus()
+                .isBadRequest();
+
     }
 
 }
