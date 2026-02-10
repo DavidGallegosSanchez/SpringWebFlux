@@ -50,7 +50,8 @@ public class ReviewHandler {
 
     public Mono<ServerResponse> updateReview(ServerRequest request) {
         var reviewId = request.pathVariable("id");
-        var existingReview = reviewReactiveRepository.findById(reviewId);
+        var existingReview = reviewReactiveRepository.findById(reviewId)
+                .switchIfEmpty(Mono.error(new ReviewDataException("Review with id " + reviewId + " not found")));
 
         return existingReview
                 .flatMap(review -> request.bodyToMono(Review.class)
