@@ -1,6 +1,7 @@
 package unit;
 
 import com.gallegos.domain.Review;
+import com.gallegos.exceptionhandler.GlobalErrorHandler;
 import com.gallegos.handler.ReviewHandler;
 import com.gallegos.repository.ReviewReactiveRepository;
 import com.gallegos.router.ReviewRouter;
@@ -16,12 +17,17 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest
-@ContextConfiguration(classes = {ReviewRouter.class, ReviewHandler.class})
+@ContextConfiguration(classes = {
+        ReviewRouter.class,
+        ReviewHandler.class,
+        GlobalErrorHandler.class
+})
 @AutoConfigureWebTestClient
 class ReviewsTest {
 
@@ -141,7 +147,15 @@ class ReviewsTest {
                 .bodyValue(review)
                 .exchange()
                 .expectStatus()
-                .isBadRequest();
+                .isBadRequest()
+                .expectBody(String.class)
+                .consumeWith(stringEntityExchangeResult -> {
+                    var responseBody = stringEntityExchangeResult.getResponseBody();
+                    assertThat(responseBody)
+                            .isNotNull()
+                            .contains("rating.movieInfoId : must not be null")
+                            .contains("rating.negative : please pass a non-negative value");
+                });
 
     }
 
