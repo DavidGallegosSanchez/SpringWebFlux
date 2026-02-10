@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: mic-moviesreview
+  profiles:
+    active: local
+  config:
+    activate:
+      on-profile: local
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/moviesreview-local
+
+server:
+  port: 8081
