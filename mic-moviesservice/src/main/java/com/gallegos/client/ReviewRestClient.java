@@ -1,14 +1,17 @@
 package com.gallegos.client;
 
 import com.gallegos.domain.Review;
-import lombok.AllArgsConstructor;
+import com.gallegos.exception.ReviewsServerException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 
 @Component
+@Slf4j
 public class ReviewRestClient {
 
     private WebClient webClient;
@@ -25,11 +28,21 @@ public class ReviewRestClient {
                 .queryParam("movieInfoId", movieId)
                 .toUriString();
 
-        return webClient
-                .get()
+        return webClient.get()
                 .uri(url)
-                .retrieve()
-                .bodyToFlux(Review.class)
-                .log();
+                .exchangeToFlux(response -> {
+
+                    if (response.statusCode().equals(HttpStatus.NOT_FOUND)) {
+                        return Flux.empty();
+                    }
+
+                    if (response.statusCode().is5xxServerError()) {
+                        return response.bodyToMono(String.class)
+                                .flatMapMany(msg ->
+                                        Flux.error(new ReviewsServerException(msg)));
+                    }
+
+                    return response.bodyToFlux(Review.class);
+                });
     }
 }
